@@ -240,6 +240,25 @@ static void Reject_ProcessSectors(Level &level)
   const size_t num_secs = level.sectors.size();
   if (num_secs == 0) return;
 
+  // If the user enables the fast compile mode (-f or --fast), skip the heavy CPU stuff!
+  if (config.fast)
+  {
+    for (size_t view = 0; view < num_secs; view++)
+    {
+      for (size_t target = 0; target < view; target++)
+      {
+        // Disconnected islands completely enveloped by void space share no visual vectors, duh!
+        if (level.sectors[view]->rej_group != level.sectors[target]->rej_group)
+        {
+          const size_t p1 = view * num_secs + target, p2 = target * num_secs + view;
+          level.reject_matrix[p1 >> 3] |= (1 << (p1 & 7));
+          level.reject_matrix[p2 >> 3] |= (1 << (p2 & 7));
+        }
+      }
+    }
+    return; // Exit out early!
+  }
+
   std::vector<std::vector<SightSegment>> sectorLines(num_secs);
   std::vector<SectorBBox> sectorBoxes(num_secs);
   std::vector<SightSegment> solidBlockers;
@@ -365,14 +384,7 @@ static void Reject_ProcessSectors(Level &level)
     for (size_t target = 0; target < view; target++)
     {
       if (sectorLines[target].empty()) continue;
-      // If the user enables the fast compile mode (-f or --fast), skip the heavy CPU stuff!
-      if (config.fast)
-      {
-        const size_t p1 = view * num_secs + target, p2 = target * num_secs + view;
-        level.reject_matrix[p1 >> 3] |= (1 << (p1 & 7));
-        level.reject_matrix[p2 >> 3] |= (1 << (p2 & 7));
-        continue;
-      }
+
       // Void Pruning, skip processing if sectors belong to independent standalone sub-maps.
       if (level.sectors[view]->rej_group != level.sectors[target]->rej_group)
       {
@@ -432,6 +444,7 @@ static void Reject_ProcessSectors(Level &level)
     }
   }
 }
+
 
 // Note: this routine is destructive to the group numbers
 static void Reject_DebugGroups(Level &level)
