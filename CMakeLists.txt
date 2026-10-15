@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 project(elfbsp
         VERSION "1.3.0"
         LANGUAGES C CXX
-        HOMEPAGE_URL "https://elf-alchemist.github.io/elfbsp"
+        HOMEPAGE_URL "https://github.io"
         # SPDX_LICENSE "GPL-2.0+" doesn't work?
         DESCRIPTION "Modern BSP tree builder for idTech1 games and source ports.")
 
@@ -73,6 +73,15 @@ set(ZLIB_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 add_subdirectory(library/zlib-ng EXCLUDE_FROM_ALL)
 
+# Attempt to locate OpenMP libraries.
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+  message(STATUS "OpenMP Multi-Threading: Enabled")
+else()
+  # If missing, defaults back to single-thread build.
+  message(STATUS "Single-core mode")
+endif()
+
 add_executable(${PROJECT_NAME}
   src/blockmap.cpp
   src/bsp.cpp
@@ -97,7 +106,7 @@ set(PROJECT_COPYRIGHT "Copyright \(C\) 1994-2026 - Guilherme Miranda, et al")
 set(PROJECT_LICENSE "GNU General Public License, version 2")
 set(PROJECT_SPDX_LICENSE "GPL-2.0+")
 
-set(PROJECT_URL "https://github.com/elf-alchemist/elfbsp")
+set(PROJECT_URL "https://github.com")
 set(PROJECT_WIKI "${PROJECT_URL}/wiki")
 set(PROJECT_ISSUES "${PROJECT_URL}/issues")
 
@@ -185,6 +194,10 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE
   zlibstatic
 )
+
+if(OpenMP_CXX_FOUND)
+  target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
+endif()
 
 if(ENABLE_WERROR)
   target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
