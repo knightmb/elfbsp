@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 project(elfbsp
         VERSION "1.3.0"
         LANGUAGES C CXX
-        HOMEPAGE_URL "https://github.io"
+        HOMEPAGE_URL "https://elf-alchemist.github.io/elfbsp"
         # SPDX_LICENSE "GPL-2.0+" doesn't work?
         DESCRIPTION "Modern BSP tree builder for idTech1 games and source ports.")
 
@@ -106,7 +106,7 @@ set(PROJECT_COPYRIGHT "Copyright \(C\) 1994-2026 - Guilherme Miranda, et al")
 set(PROJECT_LICENSE "GNU General Public License, version 2")
 set(PROJECT_SPDX_LICENSE "GPL-2.0+")
 
-set(PROJECT_URL "https://github.com")
+set(PROJECT_URL "https://github.com/elf-alchemist/elfbsp")
 set(PROJECT_WIKI "${PROJECT_URL}/wiki")
 set(PROJECT_ISSUES "${PROJECT_URL}/issues")
 
