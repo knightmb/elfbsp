@@ -74,12 +74,12 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 add_subdirectory(library/zlib-ng EXCLUDE_FROM_ALL)
 
 # Attempt to locate OpenMP libraries.
-# If missing, it prints a message and defaults back to single-threaded build.
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
   message(STATUS "OpenMP Multi-Threading: Enabled")
 else()
-  message(STATUS "OpenMP Multi-Threading: Defaulting to Single-core mode")
+  # If missing, defaults back to single-thread build.
+  message(STATUS "Single-core mode")
 endif()
 
 add_executable(${PROJECT_NAME}
